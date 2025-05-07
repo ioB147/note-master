@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "858360232413",
+    "project_id": "mynotesbeginer",
+    "storage_bucket": "mynotesbeginer.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:858360232413:android:8af9acbe1be9cb963d1e34",
+        "android_client_info": {
+          "package_name": "com.example.notemaster"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqUputo6_lkrj_DF0-Uc2jOWIAG3BfLkA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

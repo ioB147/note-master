@@ -9,6 +9,6 @@ import com.example.notemaster.view.presentation.navigation.Screen
 
 fun NavGraphBuilder.loginRoute(viewModel: AuthViewModel, navController: NavController) {
     composable(route = Screen.Login.route) {
-        LoginScreen(navController)
+        LoginScreen(viewModel, navController)
     }
 }

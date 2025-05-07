@@ -2,6 +2,7 @@ package com.example.notemaster.view.presentation.auth
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -21,20 +23,27 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.notemaster.R
+import com.example.notemaster.data.local.authLogin.Resource
+import com.example.notemaster.view.presentation.AuthViewModel
 import com.example.notemaster.view.presentation.navigation.Screen
 import com.example.notemaster.view.presentation.theme.AppTheme
 import com.example.notemaster.view.presentation.theme.spacing
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val loginFlow = viewModel?.loginFlow?.collectAsState()
+
 
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
-        val (refHeader, refEmail, refPassword, refButtonLogin, refTextSignup) = createRefs()
+
+        val (refHeader, refEmail, refPassword, refButtonLogin, refTextSignup, refLoader) = createRefs()
         val spacing = MaterialTheme.spacing
 
         Box(
@@ -49,6 +58,7 @@ fun LoginScreen(navController: NavController) {
         ) {
             AuthHeader()
         }
+
 
         TextField(
             value = email,
@@ -96,7 +106,7 @@ fun LoginScreen(navController: NavController) {
 
         Button(
             onClick = {
-                // No action for pure UI
+                viewModel?.login(email,password)
             },
             modifier = Modifier.constrainAs(refButtonLogin) {
                 top.linkTo(refPassword.bottom, spacing.large)
@@ -107,6 +117,7 @@ fun LoginScreen(navController: NavController) {
         ) {
             Text(text = stringResource(id = R.string.login), style = MaterialTheme.typography.titleMedium)
         }
+
 
         Text(
             modifier = Modifier
@@ -125,6 +136,26 @@ fun LoginScreen(navController: NavController) {
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurface
         )
+
+        loginFlow?.value?.let{
+            when(it){
+                is Resource.Failure -> {
+                    val context = LocalContext.current
+                    Toast.makeText(context, it.exception.message, Toast.LENGTH_SHORT).show()
+                }
+
+                is Resource.Success ->{
+//                    LaunchedEffect(Unit) {
+//                        navController.navigate(Screen.Home.route){
+//                            popUpTo(Screen.Home.route){inclusive=true}
+//                        }
+//                    }
+                    val context = LocalContext.current
+                    Toast.makeText(context, "Login Success", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
     }
 }
 
@@ -132,7 +163,7 @@ fun LoginScreen(navController: NavController) {
 @Composable
 fun LoginScreenPreviewLight() {
     AppTheme {
-        LoginScreen(rememberNavController())
+        LoginScreen(null,rememberNavController())
     }
 }
 
@@ -140,6 +171,6 @@ fun LoginScreenPreviewLight() {
 @Composable
 fun LoginScreenPreviewDark() {
     AppTheme {
-        LoginScreen(rememberNavController())
+        LoginScreen(null,rememberNavController())
     }
 }
