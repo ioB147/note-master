@@ -145,11 +145,11 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                 }
 
                 is Resource.Success ->{
-//                    LaunchedEffect(Unit) {
-//                        navController.navigate(Screen.Home.route){
-//                            popUpTo(Screen.Home.route){inclusive=true}
-//                        }
-//                    }
+                    LaunchedEffect(Unit) {
+                        navController.navigate(Screen.Home.route){
+                            popUpTo(Screen.Home.route){inclusive=true}
+                        }
+                    }
                     val context = LocalContext.current
                     Toast.makeText(context, "Login Success", Toast.LENGTH_SHORT).show()
                 }
