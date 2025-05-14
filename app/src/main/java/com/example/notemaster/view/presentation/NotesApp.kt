@@ -9,9 +9,8 @@ import com.example.notemaster.view.presentation.navigation.NotesNavGraph
 
 @Composable
 fun NotesApp(
-    viewModel: AuthViewModel,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
 ) {
-    NotesNavGraph( viewModel = viewModel,navController = navController, modifier = modifier)
+    NotesNavGraph(navController = navController, modifier = modifier)
 }

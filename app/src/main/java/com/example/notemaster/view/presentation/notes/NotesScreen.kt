@@ -22,25 +22,18 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.notemaster.data.local.entity.NotesEntity
-import com.example.notemaster.ui.theme.NoteMasterTheme
 import com.example.notemaster.utils.Converter.changeMillisToDateString
-import com.example.notemaster.utils.ViewModelFactory
 import com.example.notemaster.view.presentation.notes.component.TopAppBarNotes
 import java.time.Instant
 
@@ -54,9 +47,24 @@ fun NotesScreen(
     context: Context = LocalContext.current,
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
 ) {
-    val notesViewModel: NotesViewModel =
-        viewModel(factory = ViewModelFactory.getInstance(context = context))
+    val notesViewModel: NotesViewModel = hiltViewModel()
     val state by notesViewModel.state.collectAsStateWithLifecycle(lifecycleOwner = lifecycleOwner)
+
+    // Show sync error toast
+    state.syncError?.let { error ->
+        LaunchedEffect(error) {
+            Toast.makeText(context, "Sync failed: $error", Toast.LENGTH_SHORT).show()
+            notesViewModel.clearSyncError()
+        }
+    }
+
+    // Show save error toast
+    state.saveError?.let { error ->
+        LaunchedEffect(error) {
+            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+            notesViewModel.clearSaveError()
+        }
+    }
 
     LaunchedEffect(id) {
         notesViewModel.onEvent(NotesEvent.OnGetNotesById(id))
@@ -74,6 +82,7 @@ fun NotesScreen(
         description = state.description,
         onDescriptionChange = { notesViewModel.onEvent(NotesEvent.OnDescriptionChange(it)) },
         dueDate = state.dueDate,
+        isSaving = state.isSaving,
         onSaveClick = {
             val notes = NotesEntity(
                 notesId = state.currentNotesId,
@@ -81,12 +90,7 @@ fun NotesScreen(
                 description = state.description,
                 dueDate = state.dueDate ?: Instant.now().toEpochMilli()
             )
-
-            if (state.title.isNotEmpty() && state.description.isNotEmpty()) {
-                notesViewModel.saveNotes(notes)
-                navController.navigateUp()
-            } else
-                Toast.makeText(context, "All fields are required", Toast.LENGTH_SHORT).show()
+            notesViewModel.saveNotes(notes)
         },
         modifier = modifier
     )
@@ -103,6 +107,7 @@ fun NotesContent(
     description: String,
     onDescriptionChange: (String) -> Unit,
     dueDate: Long?,
+    isSaving: Boolean,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -112,7 +117,8 @@ fun NotesContent(
                 isNotesExist = isNotesExist,
                 onBackButtonClick = onBackClick,
                 onDeleteButtonClick = onDeleteClick,
-                onSaveButtonClick = onSaveClick
+                onSaveButtonClick = onSaveClick,
+                isSaving = isSaving
             )
         },
         modifier = modifier
@@ -130,7 +136,7 @@ fun NotesContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = dueDate.changeMillisToDateString(),
+                    text = dueDate?.changeMillisToDateString() ?: "No due date",
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
@@ -163,30 +169,4 @@ fun NotesContent(
             )
         }
     }
-}
-
-@Preview(showSystemUi = true)
-@Composable
-private fun PreviewNotesScreen() {
-
-    val lifecycleOwner = remember {
-        object : LifecycleOwner {
-            private val lifecycleRegistry = LifecycleRegistry(this)
-            fun getLifecycle() = lifecycleRegistry.apply {
-                currentState = Lifecycle.State.RESUMED
-            }
-
-            override val lifecycle: Lifecycle
-                get() = getLifecycle()
-        }
-    }
-
-    NoteMasterTheme {
-        NotesScreen(
-            id = 1,
-            navController = rememberNavController(),
-            lifecycleOwner = lifecycleOwner
-        )
-    }
-
 }

@@ -19,14 +19,13 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val viewModel: AuthViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             NoteMasterTheme {
                     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                        NotesApp(viewModel = viewModel, modifier = Modifier.padding(innerPadding))
+                        NotesApp(modifier = Modifier.padding(innerPadding))
                     }
             }
         }

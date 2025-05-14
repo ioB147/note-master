@@ -22,38 +22,27 @@ fun TopAppBarNotes(
     isNotesExist: Boolean,
     onBackButtonClick: () -> Unit,
     onDeleteButtonClick: () -> Unit,
-    onSaveButtonClick: () -> Unit
+    onSaveButtonClick: () -> Unit,
+    isSaving: Boolean
 ) {
     TopAppBar(
+        title = { Text("Note") },
         navigationIcon = {
             IconButton(onClick = onBackButtonClick) {
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowLeft,
-                    contentDescription = "Navigate Back",
-                    modifier = Modifier.size(30.dp)
-                )
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
             }
-        },
-        title = {
-            Text(
-                text = "Notes",
-                style = MaterialTheme.typography.headlineSmall
-            )
         },
         actions = {
             if (isNotesExist) {
                 IconButton(onClick = onDeleteButtonClick) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete Task"
-                    )
+                    Icon(Icons.Default.Delete, contentDescription = "Delete")
                 }
             }
-            IconButton(onClick = onSaveButtonClick) {
-                Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = "Delete Task"
-                )
+            IconButton(
+                onClick = onSaveButtonClick,
+                enabled = !isSaving
+            ) {
+                Icon(Icons.Default.Check, contentDescription = "Save")
             }
         }
     )

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.notemaster.data.local.authLogin.AuthRepository
 import com.example.notemaster.data.local.authLogin.Resource
+import com.example.notemaster.domain.repository.NotesRepository
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,4 +51,5 @@ class AuthViewModel @Inject constructor(
         _signUpFlow.value = null
 
     }
+
 }

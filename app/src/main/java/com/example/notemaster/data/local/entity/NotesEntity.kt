@@ -18,7 +18,4 @@ data class NotesEntity(
 
     @ColumnInfo(name = "due_date")
     val dueDate: Long,
-
-
-
 )

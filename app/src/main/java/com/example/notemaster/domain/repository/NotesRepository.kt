@@ -12,4 +12,6 @@ interface NotesRepository {
     fun getNotesById(notesId: Int): Flow<NotesEntity?>
 
     fun getAllNotes(): Flow<List<NotesEntity>>
+
+    suspend fun syncNotesWithFirebase()
 }

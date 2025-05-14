@@ -13,7 +13,6 @@ import com.example.notemaster.view.presentation.splash.splashScreenRoute
 
 @Composable
 fun NotesNavGraph(
-    viewModel: AuthViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
@@ -22,10 +21,10 @@ fun NotesNavGraph(
         startDestination = Screen.Splash.route,
         modifier = modifier
     ) {
-        loginRoute(viewModel,navController)
-        signUpRoute(viewModel, navController)
+        loginRoute(navController)
+        signUpRoute(navController)
         splashScreenRoute(navController)
-        homeScreenRoute(viewModel,navController)
+        homeScreenRoute(navController)
         notesScreenRoute(navController)
     }
 }
